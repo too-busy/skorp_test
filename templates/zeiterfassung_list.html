@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Zeiterfassung List{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1>Zeiterfassung List</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Mitarbeiter</th>
+          <th>Kunde</th>
+          <th>Startzeit</th>
+          <th>Endzeit</th>
+          <th>Stunden</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for zeiteintrag in zeiteintraege %}
+          <tr>
+            <td>{{ zeiteintrag.mitarbeiter }}</td>
+            <td>{{ zeiteintrag.kunde }}</td>
+            <td>{{ zeiteintrag.startzeit }}</td>
+            <td>{{ zeiteintrag.endzeit }}</td>
+            <td>{{ zeiteintrag.stunden }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

@@ -1,30 +1,71 @@
-<!-- einsatzplan.html -->
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Einsatzplan{% endblock %}
+{% block title %}Arbeitsplan{% endblock %}
 
 {% block extra_head %}
 <!-- FullCalendar core CSS -->
-<link href='https://fullcalendar.io/releases/main/css/main.min.css' rel='stylesheet' />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
 
 <!-- FullCalendar core JS -->
-<script src='https://fullcalendar.io/releases/main/js/main.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
+
+<style>
+#calendar {
+  width: 100%;
+  height: 100%; /* Größere Höhe des Kalenders */
+}
+
+.fc-day-header {
+  font-size: 28px; /* Größere Schriftgröße für Wochentage */
+}
+
+.fc-day-number {
+  font-size: 22px; /* Größere Schriftgröße für Tagesnummern */
+}
+
+.fc-event {
+  padding: 10px; /* Größerer Innenabstand der Ereignisse */
+  font-size: 16px; /* Größere Schriftgröße der Ereignisse */
+}
+
+</style>
+
 {% endblock %}
 
-
-{% block content %}
-<div id="calendar"></div>
-
+{% block extra_scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
-
   var calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth'
+    initialView: 'dayGridMonth',
+    events: "{% url 'arbeitsplanung:arbeitsplan_entries' %}",
+    eventDidMount: function(info) {
+      // Assign a unique color to each event
+      var color = getRandomColor();
+      info.el.style.backgroundColor = color;
+      info.el.style.borderColor = color;
+    },
+    firstDay: 1 // Set Monday as the first day of the week
   });
-
   calendar.render();
 });
-</script>
 
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center">Arbeitsplan</h1>
+
+    <div id="calendar"></div>
+</div>
 {% endblock %}

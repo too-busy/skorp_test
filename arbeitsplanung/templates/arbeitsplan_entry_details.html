@@ -1,0 +1,18 @@
+<!-- arbeitsplan_entry_details.html -->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entry Details{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Entry Details</h1>
+        <p><strong>Name:</strong> {{ entry.name }}</p>
+        <p><strong>Start Date:</strong> {{ entry.start_datum }}</p>
+        <p><strong>End Date:</strong> {{ entry.end_datum }}</p>
+        <p><strong>Mitarbeiter:</strong> {{ entry.mitarbeiter }}</p>
+        <p><strong>Kunde:</strong> {{ entry.kunde }}</p>
+        <!-- Add more details as needed -->
+    </div>
+{% endblock %}

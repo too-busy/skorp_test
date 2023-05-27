@@ -3,7 +3,6 @@ from kundendatenbank.models import Kunden
 from datetime import datetime, date
 from django.http import JsonResponse
 
-
 class Mitarbeiter(models.Model):
     VERFUEGBARKEIT_CHOICES = [
         ('frei', 'Frei'),
@@ -45,14 +44,14 @@ class Schicht(models.Model):
         return f"{self.arbeitsplan} - {self.beginn} bis {self.ende}"
 
 
-
 class Arbeitsplan(models.Model):
     mitarbeiter = models.ForeignKey(Mitarbeiter, on_delete=models.CASCADE)
     kunde = models.ForeignKey(Kunden, on_delete=models.CASCADE)
     start_datum = models.DateField()
     end_datum = models.DateField()
 
-    def save(self, *args, **kwargs):
+
+def save(self, *args, **kwargs):
         # Convert the values to the correct date format
         if isinstance(self.start_datum, str):
             self.start_datum = date.fromisoformat(self.start_datum)
@@ -61,6 +60,7 @@ class Arbeitsplan(models.Model):
 
         super().save(*args, **kwargs)
 
+
 class Zeiteintrag(models.Model):
     mitarbeiter = models.ForeignKey(Mitarbeiter, on_delete=models.CASCADE, related_name='arbeitsplanung_zeiteintraege')
 
@@ -68,17 +68,3 @@ class Zeiteintrag(models.Model):
 
     def __str__(self):
         return f"Zeiteintrag von {self.mitarbeiter.name}"
-
-
-def arbeitsplan_entries(request):
-    entries = Arbeitsplan.objects.all()
-    data = []
-
-    for entry in entries:
-        data.append({
-            'title': f"{entry.mitarbeiter.name} - {entry.kunde.name}",
-            'start_date': entry.start_datum.isoformat(),
-            'end_date': entry.end_datum.isoformat(),
-        })
-
-    return JsonResponse(data, safe=False)

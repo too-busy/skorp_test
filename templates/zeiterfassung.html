@@ -1,0 +1,65 @@
+<!-- zeiterfassung.html -->
+{% extends 'base.html' %}
+
+{% block title %}Zeiterfassung{% endblock %}
+
+{% block extra_head %}
+  <!-- Include flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1>Zeiterfassung</h1>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="id_mitarbeiter">Mitarbeiter</label>
+        <input type="text" class="form-control" id="id_mitarbeiter" name="mitarbeiter" value="{{ request.user.username }}" readonly>
+      </div>
+      <div class="form-group">
+        <label for="id_kunde">Kunde</label>
+        {{ form.kunde }}
+      </div>
+      <div class="form-group">
+        <label for="id_datum">Datum</label>
+        <input type="text" class="form-control" id="id_datum" name="datum" placeholder="Select date">
+      </div>
+      <div class="form-group">
+        <label for="id_startzeit">Startzeit</label>
+        <input type="text" class="form-control" id="id_startzeit" name="startzeit" placeholder="Select start time">
+      </div>
+      <div class="form-group">
+        <label for="id_endzeit">Endzeit</label>
+        <input type="text" class="form-control" id="id_endzeit" name="endzeit" placeholder="Select end time">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+
+  {% block extra_scripts %}
+    <!-- Include flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+      flatpickr("#id_datum", {
+        enableTime: false,
+        dateFormat: "Y-m-d"
+      });
+
+      flatpickr("#id_startzeit", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+      });
+
+      flatpickr("#id_endzeit", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+      });
+    </script>
+  {% endblock %}
+{% endblock %}
