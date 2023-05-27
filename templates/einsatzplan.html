@@ -1,0 +1,30 @@
+<!-- einsatzplan.html -->
+{% extends 'base.html' %}
+
+{% block title %}Einsatzplan{% endblock %}
+
+{% block extra_head %}
+<!-- FullCalendar core CSS -->
+<link href='https://fullcalendar.io/releases/main/css/main.min.css' rel='stylesheet' />
+
+<!-- FullCalendar core JS -->
+<script src='https://fullcalendar.io/releases/main/js/main.min.js'></script>
+{% endblock %}
+
+
+{% block content %}
+<div id="calendar"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth'
+  });
+
+  calendar.render();
+});
+</script>
+
+{% endblock %}

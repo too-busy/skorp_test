@@ -1,6 +1,8 @@
 from django.db import models
 from kundendatenbank.models import Kunden
 from datetime import datetime, date
+from django.http import JsonResponse
+
 
 class Mitarbeiter(models.Model):
     VERFUEGBARKEIT_CHOICES = [
@@ -66,3 +68,17 @@ class Zeiteintrag(models.Model):
 
     def __str__(self):
         return f"Zeiteintrag von {self.mitarbeiter.name}"
+
+
+def arbeitsplan_entries(request):
+    entries = Arbeitsplan.objects.all()
+    data = []
+
+    for entry in entries:
+        data.append({
+            'title': f"{entry.mitarbeiter.name} - {entry.kunde.name}",
+            'start_date': entry.start_datum.isoformat(),
+            'end_date': entry.end_datum.isoformat(),
+        })
+
+    return JsonResponse(data, safe=False)
