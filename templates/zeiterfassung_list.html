@@ -1,32 +1,61 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Zeiterfassung List{% endblock %}
-
 {% block content %}
-  <div class="container">
-    <h1>Zeiterfassung List</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Mitarbeiter</th>
-          <th>Kunde</th>
-          <th>Startzeit</th>
-          <th>Endzeit</th>
-          <th>Stunden</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for zeiteintrag in zeiteintraege %}
+<div class="container">
+  <h1>Zeiterfassung List</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Mitarbeiter</th>
+        <th>Kunde</th>
+        <th>Startzeit</th>
+        <th>Endzeit</th>
+        <th>Stunden</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for zeiteintrag in zeiteintraege %}
+        {% if zeiteintrag.mitarbeiter.name == request.user.mitarbeiter.name %}
           <tr>
             <td>{{ zeiteintrag.mitarbeiter }}</td>
             <td>{{ zeiteintrag.kunde }}</td>
             <td>{{ zeiteintrag.startzeit }}</td>
             <td>{{ zeiteintrag.endzeit }}</td>
-            <td>{{ zeiteintrag.stunden }}</td>
+            <td class="stunden">{{ zeiteintrag.stunden }}</td>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+        {% endif %}
+      {% endfor %}
+      <tr>
+        <td colspan="4" style="text-align: right;"><strong>Gesamtstunden:</strong></td>
+        <td id="gesamtstunden" class="stunden"></td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+  <!-- Include jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      function calculateGesamtstunden() {
+        var gesamtstunden = 0;
+
+        $('.stunden').each(function() {
+          var stunden = parseFloat($(this).text().replace(',', '.'));
+          if (!isNaN(stunden) && stunden >= 0) {
+            gesamtstunden += stunden;
+          }
+        });
+
+        gesamtstunden = gesamtstunden.toFixed(2);
+        $('#gesamtstunden').text(gesamtstunden);
+
+
+      }
+
+      // Aufruf der Funktion calculateGesamtstunden
+      calculateGesamtstunden();
+    });
+  </script>
 {% endblock %}

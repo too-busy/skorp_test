@@ -21,13 +21,18 @@
 </head>
 <body>
     <nav>
-        <!-- Navigation bar -->
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/zeiterfassung/">About</a></li>
-            <li><a href="/arbeitsplanung/einsatzplan/">Contact</a></li>
-        </ul>
-    </nav>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/about/">About</a></li>
+    <li><a href="/arbeitsplanung/einsatzplan/">Einsatzplan</a></li>
+    <li><a href="/zeiterfassung/">Zeiterfassung</a></li>
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'account_logout' %}">Logout</a></li>
+    {% else %}
+      <li><a href="{% url 'account_login' %}">Login</a></li>
+    {% endif %}
+  </ul>
+</nav>
 
     <header>
         <!-- Header content -->

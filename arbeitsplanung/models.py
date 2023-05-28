@@ -1,7 +1,9 @@
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
-from kundendatenbank.models import Kunden
 from datetime import datetime, date
 from django.http import JsonResponse
+
+from kundendatenbank.models import Kunden
 
 class Mitarbeiter(models.Model):
     VERFUEGBARKEIT_CHOICES = [
@@ -11,7 +13,8 @@ class Mitarbeiter(models.Model):
         ('krank', 'Krank'),
     ]
 
-    name = models.CharField(max_length=200, blank=False, null=False)
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, blank=False, null=False)  # Add the name field
     beginn_arbeitsverhaeltnis = models.DateField(blank=False, null=False)
     foto = models.ImageField(upload_to='mitarbeiter_fotos/', blank=True, null=True)
     telefonnummer = models.CharField(max_length=15, blank=False, null=False)
@@ -28,7 +31,8 @@ class Mitarbeiter(models.Model):
         from zeiterfassung.models import Zeiteintrag
         zeiteintraege = Zeiteintrag.objects.filter(mitarbeiter=self)
         gesamtstunden = sum(
-            (zeiteintrag.endzeit - zeiteintrag.startzeit).total_seconds() / 3600 for zeiteintrag in zeiteintraege)
+            (zeiteintrag.endzeit - zeiteintrag.startzeit).total_seconds() / 3600 for zeiteintrag in zeiteintraege
+        )
         return gesamtstunden
 
     def __str__(self):
@@ -50,8 +54,7 @@ class Arbeitsplan(models.Model):
     start_datum = models.DateField()
     end_datum = models.DateField()
 
-
-def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         # Convert the values to the correct date format
         if isinstance(self.start_datum, str):
             self.start_datum = date.fromisoformat(self.start_datum)
@@ -60,11 +63,14 @@ def save(self, *args, **kwargs):
 
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"Arbeitsplan von {self.mitarbeiter.name}"
+
 
 class Zeiteintrag(models.Model):
     mitarbeiter = models.ForeignKey(Mitarbeiter, on_delete=models.CASCADE, related_name='arbeitsplanung_zeiteintraege')
 
-    # Ihre weiteren Felder für den Zeiteintrag
+    # Your additional fields for the Zeiteintrag
 
     def __str__(self):
         return f"Zeiteintrag von {self.mitarbeiter.name}"

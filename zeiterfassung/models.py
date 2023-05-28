@@ -1,10 +1,9 @@
 from django.db import models
-from django.utils import timezone
+from arbeitsplanung.models import Mitarbeiter
 from kundendatenbank.models import Kunden
-from datetime import timedelta
 
 class Zeiteintrag(models.Model):
-    mitarbeiter = models.ForeignKey('arbeitsplanung.Mitarbeiter', on_delete=models.CASCADE, related_name='zeiteintraege')
+    mitarbeiter = models.ForeignKey(Mitarbeiter, on_delete=models.CASCADE, related_name='zeiteintraege')
     kunde = models.ForeignKey(Kunden, on_delete=models.CASCADE, related_name='zeiterfassung_zeiteintraege')
     startzeit = models.DateTimeField()
     endzeit = models.DateTimeField()
@@ -22,14 +21,4 @@ class Zeiteintrag(models.Model):
             self.stunden = None
 
     def __str__(self):
-        return f"{self.mitarbeiter.name} - {self.kunde.name} - {self.startzeit} bis {self.endzeit}"
-
-    def fromisoformat(self, value):
-        if isinstance(value, str):
-            return super().fromisoformat(value)
-        return value
-
-    def save(self, *args, **kwargs):
-        self.startzeit = self.fromisoformat(self.startzeit)
-        self.endzeit = self.fromisoformat(self.endzeit)
-        super().save(*args, **kwargs)
+        return f"{self.mitarbeiter} - {self.kunde} - {self.startzeit} bis {self.endzeit}"

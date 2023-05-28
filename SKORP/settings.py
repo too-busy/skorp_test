@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'kundendatenbank',
     'rechnungssystem',
     'nfc',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
 
 MIDDLEWARE = [

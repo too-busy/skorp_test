@@ -1,4 +1,3 @@
-<!-- zeiterfassung.html -->
 {% extends 'base.html' %}
 
 {% block title %}Zeiterfassung{% endblock %}
@@ -9,6 +8,12 @@
 {% endblock %}
 
 {% block content %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
   <div class="container">
     <h1>Zeiterfassung</h1>
 
@@ -16,50 +21,63 @@
       {% csrf_token %}
       <div class="form-group">
         <label for="id_mitarbeiter">Mitarbeiter</label>
-        <input type="text" class="form-control" id="id_mitarbeiter" name="mitarbeiter" value="{{ request.user.username }}" readonly>
+        {{ form.mitarbeiter }}
+        <input type="hidden" id="id_mitarbeiter_hidden" name="mitarbeiter" value="{{ form.mitarbeiter.value }}">
       </div>
       <div class="form-group">
         <label for="id_kunde">Kunde</label>
         {{ form.kunde }}
       </div>
       <div class="form-group">
-        <label for="id_datum">Datum</label>
-        <input type="text" class="form-control" id="id_datum" name="datum" placeholder="Select date">
-      </div>
-      <div class="form-group">
         <label for="id_startzeit">Startzeit</label>
-        <input type="text" class="form-control" id="id_startzeit" name="startzeit" placeholder="Select start time">
+        <input type="text" class="form-control" id="id_startzeit" name="startzeit" placeholder="Select start date and time" onchange="setEndzeitToSameDay()">
       </div>
       <div class="form-group">
         <label for="id_endzeit">Endzeit</label>
-        <input type="text" class="form-control" id="id_endzeit" name="endzeit" placeholder="Select end time">
+        <input type="text" class="form-control" id="id_endzeit" name="endzeit" placeholder="Select end date and time">
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>
 
+
   {% block extra_scripts %}
     <!-- Include flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-      flatpickr("#id_datum", {
-        enableTime: false,
-        dateFormat: "Y-m-d"
-      });
-
       flatpickr("#id_startzeit", {
         enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
+        dateFormat: "Y-m-d H:i",
         time_24hr: true
       });
 
       flatpickr("#id_endzeit", {
         enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
+        dateFormat: "Y-m-d H:i",
         time_24hr: true
       });
+
+      // Update hidden input value on dropdown selection change
+      const mitarbeiterDropdown = document.getElementById("id_mitarbeiter");
+      const mitarbeiterHiddenInput = document.getElementById("id_mitarbeiter_hidden");
+
+      mitarbeiterDropdown.addEventListener("change", (event) => {
+        mitarbeiterHiddenInput.value = event.target.value;
+      });
+
+      // Function to set the endzeit to the same day as startzeit
+      function setEndzeitToSameDay() {
+        const startzeitInput = document.getElementById("id_startzeit");
+        const endzeitInput = document.getElementById("id_endzeit");
+
+        const startzeit = new Date(startzeitInput.value);
+        const year = startzeit.getFullYear();
+        const month = startzeit.getMonth();
+        const day = startzeit.getDate();
+
+        const endzeit = new Date(year, month, day);
+        endzeitInput.value = endzeit.toISOString().slice(0, 16);
+      }
     </script>
   {% endblock %}
 {% endblock %}
