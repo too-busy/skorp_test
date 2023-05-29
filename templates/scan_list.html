@@ -11,39 +11,43 @@ NFC Scans
   <form id="filterForm">
     <input type="text" id="idFilter" placeholder="Filter ID">
     <input type="text" id="locationFilter" placeholder="Filter Location">
-    <input type="text" id="timestampFilter" placeholder="Filter Timestamp">
+    <input type="text" id="timestampFilter" placeholder="Filter Timestamp" value="{{ today|date:'d.m.Y' }}">
     <input type="text" id="kundeFilter" placeholder="Filter Kunde">
     <input type="text" id="userFilter" placeholder="Filter User">
   </form>
 
   {% for kunde in kunden %}
-    <h2>{{ kunde.name }}</h2>
-    <table class="table" id="scanTable_{{ kunde.id }}">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Location</th>
-          <th>Timestamp</th>
-          <th>Kunde</th>
-          <th>User</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for tag in kunde.nfctags.all %}
-          {% for scan in tag.nfcscan_set.all %}
-            {% if scan.user == request.user %}
-              <tr>
-                <td>{{ tag.id }}</td>
-                <td>{{ tag.location }}</td>
-                <td>{{ scan.timestamp|date:"d.m.Y H:i:s" }}</td>
-                <td>{{ tag.kunde }}</td>
-                <td>{{ scan.user }}</td>
-              </tr>
-            {% endif %}
+    {% if kunde.nfctags.exists %}
+      <h2>{{ kunde.name }}</h2>
+      <table class="table" id="scanTable_{{ kunde.id }}">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Location</th>
+            <th>Timestamp</th>
+            <th>Kunde</th>
+            <th>User</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tag in kunde.nfctags.all %}
+            {% for scan in tag.nfcscan_set.all %}
+              {% if scan.user == request.user and scan.timestamp|date:'d.m.Y' == today|date:'d.m.Y' %}
+                <tr>
+                  <td>{{ tag.id }}</td>
+                  <td>{{ tag.location }}</td>
+                  <td>{{ scan.timestamp|date:"d.m.Y H:i:s" }}</td>
+                  <td>{{ tag.kunde }}</td>
+                  <td>{{ scan.user }}</td>
+                </tr>
+              {% endif %}
+            {% endfor %}
           {% endfor %}
-        {% endfor %}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    {% endif %}
+  {% empty %}
+    <p>No NFC scans found.</p>
   {% endfor %}
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
