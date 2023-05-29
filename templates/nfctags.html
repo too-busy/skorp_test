@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}All NFC Tags{% endblock %}
+
+{% block content %}
+  <h1>All NFC Tags</h1>
+
+  {% for kunde in kunden %}
+    <h2>{{ kunde.name }}</h2>
+
+    {% if kunde.nfctags.exists %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Location</th>
+            <th>Kunde</th>
+            <th>Scan</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for nfctag in kunde.nfctags.all %}
+            <tr>
+              <td>{{ nfctag.id }}</td>
+              <td>{{ nfctag.location }}</td>
+              <td>{{ nfctag.kunde }}</td>
+              <td>
+                <a href="{% url 'nfc:register_scan' tag_id=nfctag.id %}">Scan</a>
+              </td>
+              <td>
+                {% if nfctag.scanned_today %}
+                  Scanned
+                  <td><a href="{% url 'nfc:view_tag' tag_id=nfctag.id %}">View</a></td>
+                {% else %}
+                  Not Scanned
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5">No NFC tags found for {{ kunde.name }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No NFC tags found for {{ kunde.name }}</p>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

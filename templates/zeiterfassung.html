@@ -15,29 +15,33 @@
   {% endif %}
 
   <div class="container">
-    <h1>Zeiterfassung</h1>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h1 class="text-center">Zeiterfassung</h1>
 
-    <form method="post">
-      {% csrf_token %}
-      <div class="form-group">
-        <label for="id_mitarbeiter">Mitarbeiter</label>
-        {{ form.mitarbeiter }}
-        <input type="hidden" id="id_mitarbeiter_hidden" name="mitarbeiter" value="{{ form.mitarbeiter.value }}">
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="id_mitarbeiter">Mitarbeiter</label>
+            {{ form.mitarbeiter }}
+            <input type="hidden" id="id_mitarbeiter_hidden" name="mitarbeiter" value="{{ form.mitarbeiter.value }}">
+          </div>
+          <div class="form-group">
+            <label for="id_kunde">Kunde</label>
+            {{ form.kunde }}
+          </div>
+          <div class="form-group">
+            <label for="id_startzeit">Startzeit</label>
+            <input type="text" class="form-control" id="id_startzeit" name="startzeit" placeholder="Select start date and time" onchange="setEndzeitToSameDay()">
+          </div>
+          <div class="form-group">
+            <label for="id_endzeit">Endzeit</label>
+            <input type="text" class="form-control" id="id_endzeit" name="endzeit" placeholder="Select end date and time">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
       </div>
-      <div class="form-group">
-        <label for="id_kunde">Kunde</label>
-        {{ form.kunde }}
-      </div>
-      <div class="form-group">
-        <label for="id_startzeit">Startzeit</label>
-        <input type="text" class="form-control" id="id_startzeit" name="startzeit" placeholder="Select start date and time" onchange="setEndzeitToSameDay()">
-      </div>
-      <div class="form-group">
-        <label for="id_endzeit">Endzeit</label>
-        <input type="text" class="form-control" id="id_endzeit" name="endzeit" placeholder="Select end date and time">
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+    </div>
   </div>
 
 

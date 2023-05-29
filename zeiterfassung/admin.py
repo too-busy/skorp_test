@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.formats import date_format
 from .models import Zeiteintrag
 
 class MonthFilter(admin.SimpleListFilter):
@@ -28,7 +29,7 @@ class MonthFilter(admin.SimpleListFilter):
             return queryset.filter(startzeit__month=self.value())
 
 class ZeiteintragAdmin(admin.ModelAdmin):
-    list_display = ('mitarbeiter', 'kunde', 'startzeit', 'endzeit', 'arbeitsstunden')
+    list_display = ('mitarbeiter', 'kunde', 'formatted_startzeit', 'formatted_endzeit', 'arbeitsstunden')
     list_filter = (MonthFilter, 'kunde')
 
     def arbeitsstunden(self, obj):
@@ -36,6 +37,14 @@ class ZeiteintragAdmin(admin.ModelAdmin):
 
     def get_month(self, obj):
         return obj.startzeit.strftime('%B')
+
+    def formatted_startzeit(self, obj):
+        return date_format(obj.startzeit, "DATETIME_FORMAT")
+    formatted_startzeit.short_description = "Startzeit"
+
+    def formatted_endzeit(self, obj):
+        return date_format(obj.endzeit, "DATETIME_FORMAT")
+    formatted_endzeit.short_description = "Endzeit"
 
     get_month.short_description = 'Monat'
     get_month.admin_order_field = 'startzeit'

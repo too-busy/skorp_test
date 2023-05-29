@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load tz %}
+
+{% block title %}
+NFC Scans
+{% endblock %}
+
+{% block content %}
+  <h1>NFC Scans</h1>
+
+  {% for kunde in kunden %}
+    <h2>{{ kunde.name }}</h2>
+
+    {% if kunde.nfctags.exists %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Location</th>
+            <th>Timestamp</th>
+            <th>Kunde</th>
+            <th>User</th>  <!-- Add a new column for the User -->
+          </tr>
+        </thead>
+        <tbody>
+          {% for tag in kunde.nfctags.all %}
+            {% for scan in tag.nfcscan_set.all %}
+              {% if scan.timestamp.date == today and scan.user == request.user %}
+                <tr>
+                  <td><a href="{% url 'nfc:view_tag' tag.id %}">{{ tag.id }}</a></td>
+                  <td>{{ tag.location }}</td>
+                  <td>{{ scan.timestamp|date:"d.m.Y H:i:s" }}</td>  <!-- Format the date as day.month.year hour:minute:second -->
+                  <td>{{ tag.kunde }}</td>
+                  <td>{{ scan.user }}</td>  <!-- Display the User -->
+                </tr>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No NFC scans found for {{ kunde.name }}</p>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

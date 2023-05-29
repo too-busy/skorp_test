@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Not Scanned NFC Tags
+{% endblock %}
+
+{% block content %}
+<h1>Not Scanned NFC Tags</h1>
+
+<p>Not all NFC tags associated with the customer have been scanned today.</p>
+
+<ul>
+  {% for tag in not_scanned_tags %}
+  <li>ID: {{ tag.id }}, Location: {{ tag.location }}</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

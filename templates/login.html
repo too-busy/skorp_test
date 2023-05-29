@@ -2,13 +2,25 @@
 
 {% block title %}Login{% endblock %}
 
+{% load static %}
+
+{% block header %}
+    <header class="text-center header-container">
+        <!-- Header content -->
+        <div class="image-container">
+            <img src="{% static 'images/login_header.jpg' %}" alt="Header Image" class="img-fluid">
+            <h2 class="tagline">SKORP Login</h2>
+        </div>
+    </header>
+{% endblock %}
+
 {% block content %}
-  <div class="container">
-    <h1>Login</h1>
-    <form method="POST" action="{% url 'account_login' %}">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Login</button>
-    </form>
-  </div>
+    <div class="container text-center">
+        <h1>Login</h1>
+        <form method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Login</button>
+        </form>
+    </div>
 {% endblock %}

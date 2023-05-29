@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Tag Details
+{% endblock %}
+
+{% load static %}
+{% block header %}
+    <header class="text-center header-container">
+        <!-- Header content -->
+        <div class="image-container">
+            <img src="{% static 'images/login_header.jpg' %}" alt="Header Image" class="img-fluid smaller-headerbg">
+            <h2 class="tagline">SKORP Login</h2>
+        </div>
+    </header>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="text-center mt-4">Tag Details</h1>
+
+    <div class="row mt-4">
+      <div class="col-md-6 offset-md-3">
+        <h2>Tag ID: {{ tag.id }}</h2>
+        <p>Location: {{ tag.location }}</p>
+        <p>Timestamp: {{ scan.timestamp|date:"d.m.Y H:i:s" }}</p>
+        <p>Kunde: {{ tag.kunde }}</p>
+
+        <p>Logged-in User: {{ request.user }}</p>
+
+        {% if success_message %}
+          <p class="text-success">{{ success_message }}</p>
+        {% endif %}
+
+        {% if error_message %}
+          <p class="text-danger">{{ error_message }}</p>
+        {% endif %}
+
+        {% if scan.image %}
+          <h3 class="mt-4">Bild:</h3>
+          <img src="{{ scan.image.url }}" alt="Scan-Bild" class="img-fluid">
+        {% endif %}
+
+        {% if scan.comment %}
+          <h3 class="mt-4">Kommentar:</h3>
+          <p>{{ scan.comment }}</p>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="image">Bild hochladen:</label>
+            <input type="file" name="image" id="image" class="form-control-file">
+          </div>
+
+          <div class="form-group">
+            <label for="comment">Kommentar:</label>
+            <textarea name="comment" id="comment" class="form-control" rows="4"></textarea>
+          </div>
+
+          <input type="submit" value="Speichern" class="btn btn-primary">
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

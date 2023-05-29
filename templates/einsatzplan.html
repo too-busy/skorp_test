@@ -10,6 +10,9 @@
 <!-- FullCalendar core JS -->
 <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
 
+<!-- FullCalendar locale -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/de.js'></script>
+
 <style>
 #calendar {
   width: 100%;
@@ -46,9 +49,41 @@ document.addEventListener('DOMContentLoaded', function() {
       info.el.style.backgroundColor = color;
       info.el.style.borderColor = color;
     },
-    firstDay: 1 // Set Monday as the first day of the week
+    firstDay: 1, // Set Monday as the first day of the week
+    locale: 'de' // Set the German locale
   });
   calendar.render();
+
+  var dailyViewEl = document.getElementById('dailyView');
+  var dailyViewCalendar = new FullCalendar.Calendar(dailyViewEl, {
+    initialView: 'timeGrid', // Set initial view to timeGrid
+    slotDuration: '00:30:00',
+    allDaySlot: false, // Disable the all-day slot
+    events: "{% url 'arbeitsplanung:arbeitsplan_entries' %}",
+    eventDidMount: function(info) {
+      // Assign a unique color to each event
+      var color = getRandomColor();
+      info.el.style.backgroundColor = color;
+      info.el.style.borderColor = color;
+
+      var eventTitle = info.event.title;
+      var mitarbeiter = info.event.extendedProps.mitarbeiter;
+      var kunde = info.event.extendedProps.kunde;
+      var start = info.event.start;
+      var end = info.event.end;
+
+      var eventContent = '<div class="event-title">' + eventTitle + '</div>';
+      eventContent += '<div class="event-details">Mitarbeiter: ' + mitarbeiter + '</div>';
+      eventContent += '<div class="event-details">Kunde: ' + kunde + '</div>';
+      eventContent += '<div class="event-details">Startzeit: ' + start.toLocaleTimeString('de') + '</div>';
+      eventContent += '<div class="event-details">Endzeit: ' + end.toLocaleTimeString('de') + '</div>';
+
+      info.el.innerHTML = eventContent;
+    },
+    firstDay: 1, // Set Monday as the first day of the week
+    locale: 'de' // Set the German locale
+  });
+  dailyViewCalendar.render();
 });
 
 function getRandomColor() {
@@ -64,8 +99,27 @@ function getRandomColor() {
 
 {% block content %}
 <div class="container">
-    <h1 class="text-center">Arbeitsplan</h1>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1 class="text-center mb-4">Arbeitsplan</h1>
+            <div id="calendar"></div>
+        </div>
+    </div>
+</div>
 
-    <div id="calendar"></div>
+<br><br><br><br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1 class="text-center mb-4">Daily View</h1>
+            <div id="dailyView"></div>
+        </div>
+    </div>
 </div>
 {% endblock %}
+
+
+
+
+

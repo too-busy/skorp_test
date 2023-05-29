@@ -13,7 +13,7 @@ class Mitarbeiter(models.Model):
         ('krank', 'Krank'),
     ]
 
-    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
+    user = models.OneToOneField('auth.User', on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255, blank=False, null=False)  # Add the name field
     beginn_arbeitsverhaeltnis = models.DateField(blank=False, null=False)
     foto = models.ImageField(upload_to='mitarbeiter_fotos/', blank=True, null=True)
@@ -26,6 +26,7 @@ class Mitarbeiter(models.Model):
         blank=False,
         null=False
     )
+
 
     def arbeitsstunden(self):
         from zeiterfassung.models import Zeiteintrag
@@ -51,16 +52,10 @@ class Schicht(models.Model):
 class Arbeitsplan(models.Model):
     mitarbeiter = models.ForeignKey(Mitarbeiter, on_delete=models.CASCADE)
     kunde = models.ForeignKey(Kunden, on_delete=models.CASCADE)
-    start_datum = models.DateField()
-    end_datum = models.DateField()
+    start_datum = models.DateTimeField()
+    end_datum = models.DateTimeField()
 
     def save(self, *args, **kwargs):
-        # Convert the values to the correct date format
-        if isinstance(self.start_datum, str):
-            self.start_datum = date.fromisoformat(self.start_datum)
-        if isinstance(self.end_datum, str):
-            self.end_datum = date.fromisoformat(self.end_datum)
-
         super().save(*args, **kwargs)
 
     def __str__(self):

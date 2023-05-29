@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <div class="container">
   <h1>Zeiterfassung List</h1>
-  <table>
+  <table class="table table-striped">
     <thead>
       <tr>
         <th>Mitarbeiter</th>
@@ -28,11 +29,11 @@
         <td colspan="4" style="text-align: right;"><strong>Gesamtstunden:</strong></td>
         <td id="gesamtstunden" class="stunden"></td>
       </tr>
-
     </tbody>
   </table>
 </div>
 {% endblock %}
+
 {% block extra_scripts %}
   <!-- Include jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -50,11 +51,9 @@
 
         gesamtstunden = gesamtstunden.toFixed(2);
         $('#gesamtstunden').text(gesamtstunden);
-
-
       }
 
-      // Aufruf der Funktion calculateGesamtstunden
+      // Call the calculateGesamtstunden function
       calculateGesamtstunden();
     });
   </script>

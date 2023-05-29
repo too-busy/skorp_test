@@ -5,7 +5,9 @@ from django.shortcuts import render, get_object_or_404
 from .models import Arbeitsplan
 from django.urls import reverse
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def einsatzplan_view(request):
     arbeitsplan_entries = Arbeitsplan.objects.all()
     arbeitsplan = []
@@ -24,6 +26,7 @@ def einsatzplan_view(request):
     return render(request, 'einsatzplan.html', {'arbeitsplan': arbeitsplan})
 
 
+
 def arbeitsplan_entry_details(request, entry_id):
     entry = get_object_or_404(Arbeitsplan, id=entry_id)
     return render(request, 'arbeitsplan_entry_details.html', {'entry': entry})
@@ -34,8 +37,10 @@ def get_random_color():
     color = ''.join(random.choices(string.hexdigits[:-6], k=6))
     return '#' + color
 
+@login_required
 def arbeitsplan_entries(request):
-    entries = Arbeitsplan.objects.all()
+    user = request.user
+    entries = Arbeitsplan.objects.filter(mitarbeiter__user=user)
     data = []
 
     for entry in entries:
