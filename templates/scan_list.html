@@ -8,38 +8,74 @@ NFC Scans
 {% block content %}
   <h1>NFC Scans</h1>
 
+  <form id="filterForm">
+    <input type="text" id="idFilter" placeholder="Filter ID">
+    <input type="text" id="locationFilter" placeholder="Filter Location">
+    <input type="text" id="timestampFilter" placeholder="Filter Timestamp">
+    <input type="text" id="kundeFilter" placeholder="Filter Kunde">
+    <input type="text" id="userFilter" placeholder="Filter User">
+  </form>
+
   {% for kunde in kunden %}
     <h2>{{ kunde.name }}</h2>
-
-    {% if kunde.nfctags.exists %}
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Location</th>
-            <th>Timestamp</th>
-            <th>Kunde</th>
-            <th>User</th>  <!-- Add a new column for the User -->
-          </tr>
-        </thead>
-        <tbody>
-          {% for tag in kunde.nfctags.all %}
-            {% for scan in tag.nfcscan_set.all %}
-              {% if scan.timestamp.date == today and scan.user == request.user %}
-                <tr>
-                  <td><a href="{% url 'nfc:view_tag' tag.id %}">{{ tag.id }}</a></td>
-                  <td>{{ tag.location }}</td>
-                  <td>{{ scan.timestamp|date:"d.m.Y H:i:s" }}</td>  <!-- Format the date as day.month.year hour:minute:second -->
-                  <td>{{ tag.kunde }}</td>
-                  <td>{{ scan.user }}</td>  <!-- Display the User -->
-                </tr>
-              {% endif %}
-            {% endfor %}
+    <table class="table" id="scanTable_{{ kunde.id }}">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Location</th>
+          <th>Timestamp</th>
+          <th>Kunde</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tag in kunde.nfctags.all %}
+          {% for scan in tag.nfcscan_set.all %}
+            {% if scan.user == request.user %}
+              <tr>
+                <td>{{ tag.id }}</td>
+                <td>{{ tag.location }}</td>
+                <td>{{ scan.timestamp|date:"d.m.Y H:i:s" }}</td>
+                <td>{{ tag.kunde }}</td>
+                <td>{{ scan.user }}</td>
+              </tr>
+            {% endif %}
           {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p>No NFC scans found for {{ kunde.name }}</p>
-    {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
   {% endfor %}
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#filterForm input').on('keyup', function() {
+        var idFilter = $('#idFilter').val().toUpperCase();
+        var locationFilter = $('#locationFilter').val().toUpperCase();
+        var timestampFilter = $('#timestampFilter').val().toUpperCase();
+        var kundeFilter = $('#kundeFilter').val().toUpperCase();
+        var userFilter = $('#userFilter').val().toUpperCase();
+
+        {% for kunde in kunden %}
+          $('#scanTable_{{ kunde.id }} tbody tr').each(function() {
+            var idText = $(this).find('td:eq(0)').text().toUpperCase();
+            var locationText = $(this).find('td:eq(1)').text().toUpperCase();
+            var timestampText = $(this).find('td:eq(2)').text().toUpperCase();
+            var kundeText = $(this).find('td:eq(3)').text().toUpperCase();
+            var userText = $(this).find('td:eq(4)').text().toUpperCase();
+
+            if (idText.indexOf(idFilter) > -1 &&
+                locationText.indexOf(locationFilter) > -1 &&
+                timestampText.indexOf(timestampFilter) > -1 &&
+                kundeText.indexOf(kundeFilter) > -1 &&
+                userText.indexOf(userFilter) > -1) {
+              $(this).show();
+            } else {
+              $(this).hide();
+            }
+          });
+        {% endfor %}
+      });
+    });
+  </script>
 {% endblock %}
